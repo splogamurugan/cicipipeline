@@ -1,0 +1,22 @@
+- name: Create containers
+  hosts: localhost
+  tasks:
+    - name: Re-create the webserver container
+      docker_container:
+        name: webserver
+        working_dir: "/var/www"
+        hostname: webserver
+        image: php/alpine
+        volumes:
+          - "../../:/var/www:rw"
+          - "../../logs:/var/www/logs:rw"
+        #command: php -S 0.0.0.0:8080 -t public
+        #entrypoint: "/entrypoint.sh"
+        state: started
+        recreate: yes
+        expose: 8080
+        env:
+          PATH: "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+        ports:  
+          - "8001:8080"
+          - "2001:22"

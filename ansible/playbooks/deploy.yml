@@ -1,0 +1,9 @@
+- name: Start application
+  hosts: all
+  tasks:
+
+
+    - name: php start
+      shell: "composer start"
+      #args:
+      #  executable: "/usr/local/bin/php"

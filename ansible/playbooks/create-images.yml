@@ -1,0 +1,13 @@
+- name: Create docker image to deploy the code
+  hosts: localhost 
+  tasks:
+    #- name: upload the site directory to the docker host
+    #  synchronize: src=../../docker/images dest=/tmp
+    #  register: sync_result
+
+    - name: Build image and with buildargs
+      docker_image:
+        path: ../../docker/images/php
+        state: present
+        name: php/alpine
+      #when: sync_result.changed

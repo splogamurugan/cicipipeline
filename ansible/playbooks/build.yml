@@ -1,0 +1,91 @@
+- name: Install composer and setup the build
+  hosts: all
+  tasks:
+
+    - name: install curl with default version
+      shell: "apk add --update curl && rm -rf /var/cache/apk/*" 
+    
+    - name: php installation
+      shell: "php -v"
+      args:
+        executable: "/usr/local/bin/php"
+
+    - name: Copy Composer installer script
+      copy: src=install-composer.sh dest=/var/www
+
+    - name: Set permissions to install-composer.sh
+      file:
+        path: /var/www/install-composer.sh
+        mode: "a+x"
+
+    # This is the fix
+    #- name: echo path
+    #  command: echo $PATH
+    #  environment:
+    #    PATH: "/usr/local/bin/"
+    #  become: true
+    #  become_user: root
+    #  become_method: sudo
+    #  register: output
+    #  changed_when: False
+    
+    #- name: display fixed output
+    #  debug: "msg={{ output.stdout }}"
+    #
+    #- name: Run the composer script
+    #  become: true
+    #  environment:
+    #    PATH: "{{ ansible_env.PATH }}"
+    #  become_method: sudo
+    #  become_user: root
+    #  shell: "cd /var/www/ && install-composer.sh"
+    #  args:
+    #    executable: "/usr/local/bin/php"
+      #script: install-composer.sh
+    
+    #- name: Move Composer globally
+    #  command: mv /var/www/composer.phar /usr/local/bin/composer
+
+    #- name: Set permissions on Composer
+    #  file:
+    #    path: /usr/local/bin/composer
+    #    mode: "a+x"
+ 
+    
+- name: copy application files and install composer
+  hosts: localhost
+  
+  tasks: 
+    - name: run composer install 
+      shell: "docker exec webserver /var/www/install-composer.sh"
+
+    #- name: copy site files
+    #  shell: "docker cp ../../{{ item }} webserver:/var/www/"
+    #  with_items:
+    #   - "public"
+    #   - "src"
+    #   - "templates"
+    #   - "tests"
+    #   - "phpunit.xml"
+    #   - "logs"
+    #   - "composer.json"
+    
+    #- name: run composer setup for site todo - need to do at hosts:all
+    #  shell: "docker exec webserver composer install"
+
+- name: move composer and site files
+  hosts: all
+  tasks: 
+    - name: Move Composer globally
+      command: mv /var/www/composer.phar /usr/local/bin/composer
+    
+    - name: composer install - todo-not working
+      shell: "cd /var/www/ && composer install"
+      args:
+        executable: "/usr/local/bin/php"
+
+- name: build the application
+  hosts: localhost
+  tasks:
+    - name: run composer setup for site todo - need to do at hosts:all
+      shell: "docker exec webserver composer install" 

@@ -1,0 +1,5 @@
+- name: Test the application
+  hosts: localhost
+  tasks:
+    - name: Run the PHPUNIT
+      shell: "docker exec webserver composer test"
