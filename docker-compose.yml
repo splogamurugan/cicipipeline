@@ -7,6 +7,7 @@ volumes:
 services:
     slim:
         image: php:7-alpine
+        container_name: cicdpipeline_slim_1
         working_dir: /var/www
         command: php -S 0.0.0.0:80 -t public
         environment:
